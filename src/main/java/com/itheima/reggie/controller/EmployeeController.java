@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
+import static com.itheima.reggie.common.R.error;
+
 @Slf4j
   @RestController
   @RequestMapping("/employee")
@@ -34,7 +36,7 @@ import java.time.LocalDateTime;
           Employee one = employeeService.getOne(queryWrapper);
 
           if (one == null || !one.getPassword().equals(md5password) || one.getStatus() == 0) {
-              return R.error("登录失败");
+              return error("登录失败");
           }
 
           session.setAttribute("employee", one.getId());
@@ -89,5 +91,32 @@ import java.time.LocalDateTime;
         employeeService.page(pageInfo, queryWrapper);
 
         return R.success(pageInfo);
+    }
+
+    /**
+     * 根据id修改员工信息
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> update(@RequestBody Employee employee, HttpSession session) {
+        log.info("修改员工");
+        if (employee.getId() == 1) {
+            return R.error("管理员账号不能修改");
+        }
+
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser((Long) session.getAttribute("employee"));
+
+        employeeService.updateById(employee);
+        return R.success("修改成功");
+    }
+
+    @GetMapping("/{empId}")
+    public  R<Employee> get(@PathVariable Long empId) {
+        log.info("获取员工信息");
+        Employee employee = employeeService.getById(empId);
+
+        return R.success(employee);
     }
   }    
