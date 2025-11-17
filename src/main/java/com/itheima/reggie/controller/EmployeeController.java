@@ -61,15 +61,15 @@ import static com.itheima.reggie.common.R.error;
 
         //设置初始密码123456，需要进行md5加密处理
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-
-        //获得当前登录用户的id
-        Long empId = (Long) request.getSession().getAttribute("employee");
-
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
+//
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//
+//        //获得当前登录用户的id
+//        Long empId = (Long) request.getSession().getAttribute("employee");
+//
+//        employee.setCreateUser(empId);
+//        employee.setUpdateUser(empId);
 
         employeeService.save(employee);
         return R.success("新增员工成功");
@@ -105,8 +105,8 @@ import static com.itheima.reggie.common.R.error;
             return R.error("管理员账号不能修改");
         }
 
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser((Long) session.getAttribute("employee"));
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser((Long) session.getAttribute("employee"));
 
         employeeService.updateById(employee);
         return R.success("修改成功");
