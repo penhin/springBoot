@@ -93,7 +93,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper,Dish> implements Dis
     }
 
     @Override
-    public void removeByIds(List<Long> ids) {
+    public void removeDishByIds(List<Long> ids) {
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Dish::getId, ids).eq(Dish::getStatus, 1);
         int count = this.count(queryWrapper);

@@ -9,7 +9,7 @@ import java.util.List;
 public interface DishService extends IService<Dish> {
 
     void updateStatus(List<Long> ids, Integer status);
-    void removeByIds(List<Long> ids);
+    void removeDishByIds(List<Long> ids);
     void saveWithFlavor(DishDto dishDto);
     void updateWithFlavor(DishDto dishDto);
     DishDto getByIdWithFlavor(Long id);

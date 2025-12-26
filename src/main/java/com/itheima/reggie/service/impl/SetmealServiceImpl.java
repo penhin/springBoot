@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.reggie.Dto.DishDto;
 import com.itheima.reggie.Dto.SetmealDto;
+import com.itheima.reggie.common.CustomException;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.DishFlavor;
 import com.itheima.reggie.entity.Setmeal;
@@ -86,6 +87,31 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
         updateWrapper.in(Setmeal::getId, ids).set(Setmeal::getStatus, status);
 
         this.update(updateWrapper);
+    }
+
+    @Transactional
+    @Override
+    public void removeWithDish(List<Long> ids) {
+
+        // 1. 校验是否有起售套餐
+        boolean exists = this.lambdaQuery()
+                .in(Setmeal::getId, ids)
+                .eq(Setmeal::getStatus, 1)
+                .count() > 0;
+        if (exists) {
+            throw new CustomException("起售中的套餐不能删除");
+        }
+
+        // 2. 删除套餐
+        this.lambdaUpdate()
+                .in(Setmeal::getId, ids)
+                .eq(Setmeal::getStatus, 0)
+                .remove();
+
+        // 3. 删除关联菜品
+        LambdaQueryWrapper<SetmealDish> dishWrapper = new LambdaQueryWrapper<>();
+        dishWrapper.in(SetmealDish::getSetmealId, ids);
+        setmealDishService.remove(dishWrapper);
     }
 
 }
