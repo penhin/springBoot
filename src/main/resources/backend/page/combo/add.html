@@ -465,8 +465,11 @@
                 this.ruleForm.status = res.data.status === '1'
                 this.ruleForm.price = res.data.price / 100
                 this.imageUrl = `/common/download?name=${res.data.image}`
-                this.checkList = res.data.setmealDishes
-                this.dishTable = res.data.setmealDishes
+                this.dishTable = res.data.setmealDishes.map(item => ({
+                    ...item,
+                    dishName: item.name,
+                }))
+                this.checkList = JSON.parse(JSON.stringify(this.dishTable))
                 this.ruleForm.idType = res.data.categoryId
                 // this.ruleForm.password = ''
               } else {
@@ -517,13 +520,18 @@
 
           // 保存添加菜品列表
           addTableList() {
-            this.dishTable = JSON.parse(JSON.stringify(this.checkList))
+                this.dishTable = this.checkList.map(item => ({
+                dishId: item.dishId,
+                name: item.dishName,
+                dishName: item.dishName,
+                price: item.price,
+                copies: item.copies || 1
+            }))
             this.dishTable.forEach((n) => {
               n.copies = 1
             })
             this.dialogVisible = false
             // 添加处理逻辑清空选中list
-            this.checkList = []
           },
           submitForm(formName, st) {
             this.$refs[formName].validate((valid) => {
@@ -662,6 +670,7 @@
                   n.copies = 1
                   // n.dishCopies = 1
                   n.dishName = n.name
+                  n.name = n.name
                 })
                 this.dishAddList = newArr
               } else {
